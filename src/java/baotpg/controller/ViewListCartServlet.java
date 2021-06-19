@@ -7,6 +7,8 @@ package baotpg.controller;
 
 import baotpg.books.BookDAO;
 import baotpg.books.BookDTO;
+import baotpg.codes.CodeDAO;
+import baotpg.codes.CodesDTO;
 import com.sun.java.swing.plaf.windows.WindowsBorders;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,12 +48,15 @@ public class ViewListCartServlet extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             BookDAO bookDAO = new BookDAO();
             listBook = bookDAO.getListBook("", "", "", "");
+            CodeDAO codeDAO = new CodeDAO();
+            ArrayList<CodesDTO> listCode = codeDAO.getListCode();
+            request.setAttribute("listCode", listCode);
             request.setAttribute("listBook", listBook);
             request.setAttribute("dateOrder", Date.valueOf(java.time.LocalDate.now()));
         } catch (NamingException ex) {
-            Logger.getLogger(ViewListCartServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log(ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(ViewListCartServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log(ex.getMessage());
         } finally {
             request.getRequestDispatcher("ViewListCart.jsp").forward(request, response);
         }

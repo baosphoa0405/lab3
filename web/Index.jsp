@@ -51,7 +51,7 @@
 
         <h1 style="color: red; text-align: center">${requestScope.errorAddToCart}</h1>
         <h1 style="color: green; text-align: center">${requestScope.orderSuccess}</h1>
-          <h1 style="text-align: center;color: red">${requestScope.orderFail}</h1>
+         
         <div class="container mt-5">
             <div class="row">
                 <form class="form-inline my-2 my-lg-0" method="MainController">

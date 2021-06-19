@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.naming.NamingException;
 
 /**
@@ -56,4 +57,29 @@ public class UserDAO {
         }
         return user;
     }
+     public ArrayList<UserDTO> getAllUser() throws NamingException, SQLException{
+        UserDTO user = null;
+         ArrayList<UserDTO> list = new ArrayList<>();
+        try {
+            cn = DBHelper.makeConnection();
+            if (cn != null) {
+                String sql = "select userID, username, password, r.roleID, roleName, statusName, s.statusID from Users u, Roles r, Status s where "
+                        + "u.roleID = r.roleID and u.statusID = s.statusID and r.roleID = 1 ";
+                pstm = cn.prepareStatement(sql);
+                rs = pstm.executeQuery();
+                while (rs.next()) {
+                    user = new UserDTO(rs.getString("userID"), rs.getString("userName"),
+                            rs.getString("password"), new RoleDTO(rs.getInt("roleID"),
+                                    rs.getString("roleName")), new StatusDTO(rs.getInt("statusID"),
+                                            rs.getString("statusName")));
+                    list.add(user);
+                }
+            }
+        } finally {
+            close();
+        }
+        return list;
+    }
+    
+    
 }

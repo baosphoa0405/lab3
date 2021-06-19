@@ -59,10 +59,10 @@
                 </form>
             </div>
         </div>
-        <c:if test="${empty requestScope.listHistoryMap}">
-            <h1 style="text-align: center">No List history</h1>
+        <c:if test="${not empty requestScope.emptyMap}">
+            <h1 style="text-align: center">${requestScope.emptyMap}</h1>
         </c:if>
-        <c:if test="${not empty requestScope.listHistoryMap}">
+        <c:if test="${empty requestScope.emptyMap}">
             <div class="container">
                 <div class="row">
                     <div class="col-12">
@@ -80,6 +80,7 @@
                                     <th>Category Name</th>
                                     <th>Price Book</th>
                                     <th>Quantity Book</th> 
+                                    <th>Discount</th> 
                                     <th>Total Price</th>
                                 </tr>
                             </thead>
@@ -130,6 +131,9 @@
                                             <c:forEach var="i" items="${item.value}">
                                                 ${i.quantity}<br/>
                                             </c:forEach>
+                                        </td>
+                                        <td>
+                                           ${item.value[0].cart.code.codeValue}%
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.totalPrice}">

@@ -8,15 +8,22 @@ package baotpg.controller;
 import baotpg.books.BookDAO;
 import baotpg.books.BookDTO;
 import baotpg.cart.CartDTO;
+import baotpg.codeDetails.CodeDetailDAO;
+import baotpg.codeDetails.CodeDetailDTO;
+import baotpg.codes.CodeDAO;
+import baotpg.codes.CodesDTO;
 import baotpg.histories.HistoryDAO;
 import baotpg.histories.HistoryDTO;
 import baotpg.historyDetails.HistoryDetailDAO;
 import baotpg.historyDetails.HistoryDetailDTO;
+import baotpg.status.StatusDTO;
 import baotpg.users.UserDTO;
+import baotpg.utils.MyContants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,7 +45,6 @@ public class CheckoutServlet extends HttpServlet {
 
     private String SUCCESSS = "LoadProductServlet";
     private String FAIL = "ViewListCartServlet";
-    private String FAIL_OUT_OF_STOCK = "LoadProductServlet";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,6 +60,8 @@ public class CheckoutServlet extends HttpServlet {
         String url = FAIL;
         try {
             response.setContentType("text/html;charset=UTF-8");
+            String code = request.getParameter("code");
+            int codeValue = 0;
             String dateOrder = request.getParameter("dateOrder");
             String dateShip = request.getParameter("dateShip");
             String total = request.getParameter("total");
@@ -66,31 +74,50 @@ public class CheckoutServlet extends HttpServlet {
             BookDAO bookDao = new BookDAO();
             boolean checkQuantity = false;
             String idBookOutOfStock = "";
-            if (!dateShip.isEmpty()) {
+            if (code == null) {
+                code = "";
+            }
+            if (!dateShip.isEmpty() && !code.isEmpty()) {
                 // kiem tra so luong trong kho trc
                 for (String idBook : listKeys) {
                     BookDTO book = bookDao.getDetailBook(idBook);
                     if (book.getQuantity() < cart.get(idBook)) {
                         checkQuantity = true;
                         idBookOutOfStock = book.getBookID();
+                        cart.remove(idBook);
                         break;
                     }
                 }
                 if (checkQuantity) {
                     mess = "Sorry book out of stock " + idBookOutOfStock;
                     request.setAttribute("orderFail", mess);
-                    session.removeAttribute("cart");
-                    session.removeAttribute("listCart");
-                    url = FAIL_OUT_OF_STOCK;
                 } else {
-                    boolean flag = historyDao.insertHistory(new HistoryDTO(0, Float.parseFloat(total),
-                            Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user));
+                    codeValue = Integer.parseInt(code);
+                    CodeDAO codeDAO = new CodeDAO();
+                    ArrayList<CodesDTO> listCode = codeDAO.getListCode();
+                    CodesDTO codeDTO = null;
+                    // tìm object code
+                    for (CodesDTO codesDTO : listCode) {
+                        if (codesDTO.getCodeValue() == codeValue) {
+                            codeDTO = new CodesDTO(codesDTO.getCodeID(), codesDTO.getCodeValue(), codesDTO.getDate());
+                            break;
+                        }
+                    }
+                    // discount nè 
+                    float totalAfterDiscount = Float.parseFloat(total) - (Float.parseFloat(total) * codeValue / 100);
+                    // insert History
+                    boolean flag = historyDao.insertHistory(new HistoryDTO(0, totalAfterDiscount,
+                            Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO));
+                    // insert codeDetail
+                    CodeDetailDAO codeDetail = new CodeDetailDAO();
+                    boolean insertCodeDetai =  codeDetail.insertCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
+                            new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
                     int idCart = historyDao.getIDCartBy(user.getUserID());
                     HistoryDetailDAO historyDetailDao = new HistoryDetailDAO();
 
                     if (flag) {
                         for (String idBook : listKeys) {
-                            HistoryDetailDTO historyDetail = new HistoryDetailDTO(new HistoryDTO(idCart, 0, null, null, false, user),
+                            HistoryDetailDTO historyDetail = new HistoryDetailDTO(new HistoryDTO(idCart, 0, null, null, false, user, codeDTO),
                                     new BookDTO(idBook, "", "", "", "", 0, null, null, 0, null), cart.get(idBook));
                             boolean isAdd = historyDetailDao.insertHistortyDetail(historyDetail);
                             if (isAdd) {

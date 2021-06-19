@@ -55,6 +55,7 @@
         <h1 style="text-align: center"> Management Book</h1>
         <h1 style="text-align: center">${requestScope.addSuccess}</h1>
         <a class="btn btn-danger" href="MainController?btnAction=Insert">Add new Book</a>
+        <a class="btn btn-danger" href="MainController?btnAction=ViewDiscount">View Discount</a>
         <div class="container">
             <div class="row">
                 <div class="col-12">

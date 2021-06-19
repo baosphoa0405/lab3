@@ -5,6 +5,7 @@
  */
 package baotpg.histories;
 
+import baotpg.codes.CodesDTO;
 import baotpg.users.UserDTO;
 import java.io.Serializable;
 import java.sql.Date;
@@ -20,19 +21,29 @@ public class HistoryDTO implements Serializable {
     private Date dateOrder, dateShip;
     private boolean isPayment;
     private UserDTO user;
+    private CodesDTO code;
 
-    public HistoryDTO(int IDcart, float totalPrice, Date dateOrder, Date dateShip, boolean isPayment, UserDTO user) {
+    public HistoryDTO(int IDcart, float totalPrice, Date dateOrder, Date dateShip, boolean isPayment, UserDTO user, CodesDTO code) {
         this.IDcart = IDcart;
         this.totalPrice = totalPrice;
         this.dateOrder = dateOrder;
         this.dateShip = dateShip;
         this.isPayment = isPayment;
         this.user = user;
+        this.code = code;
+    }
+
+    public CodesDTO getCode() {
+        return code;
+    }
+
+    public void setCode(CodesDTO code) {
+        this.code = code;
     }
 
     @Override
     public String toString() {
-        return "CartDTO{" + "IDcart=" + IDcart + ", totalPrice=" + totalPrice + ", dateOrder=" + dateOrder + ", dateShip=" + dateShip + ", isPayment=" + isPayment + ", user=" + user + '}';
+        return "HistoryDTO{" + "IDcart=" + IDcart + ", totalPrice=" + totalPrice + ", dateOrder=" + dateOrder + ", dateShip=" + dateShip + ", isPayment=" + isPayment + ", user=" + user + ", code=" + code + '}';
     }
 
     public int getIDcart() {

@@ -33,8 +33,10 @@ public class MainController extends HttpServlet {
     private String ADD_DELETE_TO_CART_SERVLET ="AddDeleteToCartServlet";
     private String CHECKOUT_SERVLET ="CheckoutServlet";
     private String VIEW_HISTORY_SERVLET ="ViewHistoryServlet";
-    
-    
+    private String VIEW_DISCOUNT = "ViewDiscountServlet";
+    private String CREATE_DISCOUNT = "CreateDiscountServlet";
+    private String LOAD_PRODUCT_ADMIN = "LoadProductAdminServlet";
+    private String ADD_DISCOUNT_SERVLET = "AddDiscountServlet";
     
     private String ACTION_LOGIN = "Login";
     private String ACTION_LOGOUT = "Logout";
@@ -50,6 +52,10 @@ public class MainController extends HttpServlet {
     private String ActionCheckout = "Checkout";
     private String Action_View_History = "ViewHistory";
     private String Action_Search_History = "Search History";
+    private String Action_View_Discount = "ViewDiscount";
+    private String Action_Create_Discount = "createDiscount";
+    private String Action_load_product_admin = "loadAdmin";
+    private String Action_ADD_DISCOUNT = "AddDiscount";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -65,7 +71,6 @@ public class MainController extends HttpServlet {
         String btnAction = request.getParameter("btnAction");
         String url = "";
         try {
-
             if (btnAction == null) {
                 url = LOAD_PRODUCT_JSP;
             }else if (btnAction.equals(ACTION_LOGIN)) {
@@ -96,6 +101,12 @@ public class MainController extends HttpServlet {
                 url = VIEW_HISTORY_SERVLET;
             }else if (btnAction.equals(Action_Search_History)) {
                 url = VIEW_HISTORY_SERVLET;
+            }else if (btnAction.equals(Action_View_Discount)) {
+                url = VIEW_DISCOUNT;
+            }else if (btnAction.equals(Action_Create_Discount)){
+                url = CREATE_DISCOUNT;
+            }else if (btnAction.equals(Action_load_product_admin)) {
+                url = LOAD_PRODUCT_ADMIN;
             }
         } catch (Exception e) {
             log(e.getMessage());

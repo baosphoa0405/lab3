@@ -40,14 +40,15 @@ public class HistoryDAO {
         try {
             cn = DBHelper.makeConnection();
             if (cn != null) {
-                String sql = "Insert into Histories(totalPrice, dateOrder, dateShip, isPayment, userID) "
-                        + "Values (?,?,?,?,?)";
+                String sql = "Insert into Histories(totalPrice, dateOrder, dateShip, isPayment, userID, codeID) "
+                        + "Values (?,?,?,?,?,?)";
                 pstm = cn.prepareStatement(sql);
                 pstm.setFloat(1, history.getTotalPrice());
                 pstm.setDate(2, history.getDateOrder());
                 pstm.setDate(3, history.getDateShip());
                 pstm.setBoolean(4, history.isIsPayment());
                 pstm.setString(5, history.getUser().getUserID());
+                pstm.setInt(6, history.getCode().getCodeID());
                 flag = pstm.executeUpdate() > 0 ? true : false;
             }
         } finally {

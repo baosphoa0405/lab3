@@ -7,6 +7,7 @@ package baotpg.historyDetails;
 
 import baotpg.books.BookDTO;
 import baotpg.categories.CategoriesDTO;
+import baotpg.codes.CodesDTO;
 import baotpg.histories.HistoryDTO;
 import baotpg.status.StatusDTO;
 import baotpg.users.UserDTO;
@@ -75,11 +76,13 @@ public class HistoryDetailDAO {
             }
             if (cn != null) {
                 String sql = "select h.IDcart, totalPrice, dateOrder, dateShip, isPayment, "
-                        + "h.userID, b.title, b.image, b.bookID, b.price, hd.quantity,  b.statusID, s.statusName, c.categoryName, c.categoryID "
-                        + "from Histories h, HistoryDetails hd, Books b, Users u, Status s, Categories c \n"
+                        + "h.userID, b.title, b.image, b.bookID, b.price, hd.quantity,  b.statusID, s.statusName, c.categoryName, c.categoryID, h.codeID "
+                        + "codeID, co.codeValue, co.createDate "
+                        + "from Histories h, HistoryDetails hd, Books b, Users u, Status s, Categories c, Codes co \n"
                         + "where h.IDcart = hd.IDcart "
                         + "and h.userID = u.userID "
                         + "and hd.bookID = b.bookID "
+                        + "and h.codeID = co.codeID "
                         + "and b.statusID = s.statusID "
                         + "and b.categoryID = c.categoryID "
                         + "and h.userID = ? " + sqlCondition;
@@ -93,7 +96,7 @@ public class HistoryDetailDAO {
                 }
                 if (!title.isEmpty() && !dateOrder.isEmpty()) {
                     pstm.setString(2, "%" + title + "%");
-                    pstm.setString(2, dateOrder);
+                    pstm.setString(3, dateOrder);
                 }
                 rs = pstm.executeQuery();
                 while (rs.next()) {
@@ -103,7 +106,7 @@ public class HistoryDetailDAO {
                             "", "", 0, status, category, rs.getFloat("price"), null);
                     UserDTO user = new UserDTO(rs.getString("userID"), "", "", null, null);
                     HistoryDTO history = new HistoryDTO(rs.getInt("IDcart"), rs.getFloat("totalPrice"),
-                            rs.getDate("dateOrder"), rs.getDate("dateShip"), rs.getBoolean("isPayment"), user);
+                            rs.getDate("dateOrder"), rs.getDate("dateShip"), rs.getBoolean("isPayment"), user,new CodesDTO(rs.getInt("codeID"), rs.getInt("codeValue"), rs.getDate("createDate")));
                     HistoryDetailDTO historyDetail = new HistoryDetailDTO(history, book, rs.getInt("quantity"));
                     listHistory.add(historyDetail);
                 }

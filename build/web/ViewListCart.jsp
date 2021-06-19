@@ -49,6 +49,7 @@
             </div>
         </nav>
         <h1 style="text-align: center">Cart shopping</h1>
+        <h1 style="text-align: center;color: red">${requestScope.orderFail}</h1>
         <c:if test="${empty sessionScope.listCart}">
             <h1 style="text-align: center">No list Cart Please Buy Something</h1>
         </c:if>
@@ -110,6 +111,12 @@
                         <p>Total: ${total > 0 ? String.format("%,.0f", total) : 0} Đ</p>
                         <form method="Post" action="MainController">
                             <span>DateBook: <input type="date" id="dateOrder" name="dateOrder" value="${requestScope.dateOrder}" disabled="true"> </span>
+                            <label for="discount">Choose promotion: </label>
+                            <select id="discount" name="code">
+                                <c:forEach var="item" items="${requestScope.listCode}">
+                                    <option value="${item.codeValue}">${item.codeValue}%</option>
+                                </c:forEach>
+                            </select><br/>
                             <span>DateShip: <input type="date" name="dateShip" value=""  min="${requestScope.dateOrder}"/>
                                 <span style="color: red">${requestScope.errorDateShip}</span>   
                                 <input type="hidden" name="total" value="${total}" />

@@ -66,24 +66,36 @@ public class ViewHistoryServlet extends HttpServlet {
             for (Integer key : listKey) {
                 for (HistoryDetailDTO item : listHistoryDetail) {
                     if (item.getCart().getIDcart() == key) {
-                        ArrayList<HistoryDetailDTO> a = map.get(key);
-                        if (a == null) {
-                            a = new ArrayList<>();
-                            a.add(item);
+                        ArrayList<HistoryDetailDTO> listHistoryDetailMap = map.get(key);
+                        if (listHistoryDetailMap == null) {
+                            listHistoryDetailMap = new ArrayList<>();
+                            listHistoryDetailMap.add(item);
                         } else {
-                            a.add(item);
+                            listHistoryDetailMap.add(item);
                         }
-                        map.put(key, a);
+                        map.put(key, listHistoryDetailMap);
                     }
                 }
             }
-            request.setAttribute("listHistoryMap", map);
+            // check hash map empty or not empty
+            int count = 0;
+            for (Integer key : listKey) {
+                ArrayList<HistoryDetailDTO> listHashMap = map.get(key);
+                if (listHashMap != null) {
+                    count++;
+                }
+            }
+            if (count != 0) {
+                request.setAttribute("listHistoryMap", map);
+            }else{
+                request.setAttribute("emptyMap", "No List history");
+            }
             request.setAttribute("title", titleSearch);
             request.setAttribute("dateBooking", dateBooking);
         } catch (SQLException ex) {
-            Logger.getLogger(ViewHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log(ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(ViewHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log(ex.getMessage());
         } finally {
             request.getRequestDispatcher("ViewListHistory.jsp").forward(request, response);
         }
