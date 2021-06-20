@@ -47,23 +47,31 @@ public class ViewListCartServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ArrayList<BookDTO> listBook = new ArrayList<>();
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
             BookDAO bookDAO = new BookDAO();
             listBook = bookDAO.getListBook("", "", "", "");
             HttpSession session = request.getSession();
             UserDTO user = (UserDTO) session.getAttribute("account");
-            CodeDAO codeDAO = new CodeDAO();
-            ArrayList<CodesDTO> listCode = codeDAO.getListCodeByIDUser(user.getUserID(), MyContants.STATUS_NUMBER_ACTIVE);
-            request.setAttribute("listCode", listCode);
-            request.setAttribute("listBook", listBook);
-            request.setAttribute("dateOrder", Date.valueOf(java.time.LocalDate.now()));
+            if (user == null) {
+                url = "LoadProductServlet";
+                request.setAttribute("errorAddToCart", "Please login before view list cart");
+                request.getRequestDispatcher("LoadProductServlet").forward(request, response);
+            } else {
+                CodeDAO codeDAO = new CodeDAO();
+                ArrayList<CodesDTO> listCode = codeDAO.getListCodeByIDUser(user.getUserID(), MyContants.STATUS_NUMBER_ACTIVE);
+                request.setAttribute("listCode", listCode);
+                request.setAttribute("listBook", listBook);
+                request.setAttribute("dateOrder", Date.valueOf(java.time.LocalDate.now()));
+                url = "ViewListCart.jsp";
+            }
         } catch (NamingException ex) {
             log(ex.getMessage());
         } catch (SQLException ex) {
             log(ex.getMessage());
         } finally {
-            request.getRequestDispatcher("ViewListCart.jsp").forward(request, response);
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

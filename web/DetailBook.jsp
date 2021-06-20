@@ -18,7 +18,8 @@
             BookID: <input type="text" name="bookID" disabled value="${requestScope.bookDetail.bookID}" /> <br/>
             <input type="hidden" name="bookID"  value="${requestScope.bookDetail.bookID}" /> <br/>
             title: <input type="text" name="title" value="${requestScope.bookDetail.title}" /><br/>
-            img <input type="text" name="image" value="${requestScope.bookDetail.image}" /><br/>
+            img  <img style="width: 100px; height: 100px" class="card-img-top" src="./image/${requestScope.bookDetail.image}.jpeg"> 
+            <input type="text" name="image" value="${requestScope.bookDetail.image}" /><br/>
             author <input type="text" name="author" value="${requestScope.bookDetail.author}" /><br/>
             quantity <input type="number" min="0" name="quantity" value="${requestScope.bookDetail.quantity}" /><br/>
             price <input type="numer" min="0" name="price" value="${requestScope.bookDetail.price}" /><br/>

@@ -8,6 +8,7 @@ package baotpg.controller;
 import baotpg.histories.HistoryDAO;
 import baotpg.historyDetails.HistoryDetailDAO;
 import baotpg.historyDetails.HistoryDetailDTO;
+import baotpg.users.UserDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -22,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -43,61 +45,71 @@ public class ViewHistoryServlet extends HttpServlet {
             throws ServletException, IOException {
         ArrayList<HistoryDetailDTO> listHistoryDetail = null;
         ArrayList<Integer> listIDcartHistory = null;
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
-            String UserID = request.getParameter("UserID");
-            String titleSearch = request.getParameter("title");
-            String dateBooking = request.getParameter("dateBooking");
-            HistoryDetailDAO historyDetail = new HistoryDetailDAO();
-            HistoryDAO historyDao = new HistoryDAO();
-            if (titleSearch == null) {
-                titleSearch = "";
-            }
-            if (dateBooking == null) {
-                dateBooking = "";
-            }
-            listHistoryDetail = historyDetail.getListHistoryDetail(UserID, titleSearch, dateBooking);
-            listIDcartHistory = historyDao.getIDCart(UserID);
-            HashMap<Integer, ArrayList<HistoryDetailDTO>> map = new HashMap<>();
-            for (Integer item : listIDcartHistory) {
-                map.put(item, null);
-            }
-            Set<Integer> listKey = map.keySet();
-            for (Integer key : listKey) {
-                for (HistoryDetailDTO item : listHistoryDetail) {
-                    if (item.getCart().getIDcart() == key) {
-                        ArrayList<HistoryDetailDTO> listHistoryDetailMap = map.get(key);
-                        if (listHistoryDetailMap == null) {
-                            listHistoryDetailMap = new ArrayList<>();
-                            listHistoryDetailMap.add(item);
-                        } else {
-                            listHistoryDetailMap.add(item);
+            HttpSession session = request.getSession();
+            UserDTO user = (UserDTO) session.getAttribute("account");
+            if (user == null) {
+                url = "LoadProductServlet";
+                request.setAttribute("errorAddToCart", "Please login before view history");
+                request.getRequestDispatcher("LoadProductServlet").forward(request, response);
+            } else {
+                String UserID = request.getParameter("UserID");
+                String titleSearch = request.getParameter("title");
+                String dateBooking = request.getParameter("dateBooking");
+                HistoryDetailDAO historyDetail = new HistoryDetailDAO();
+                HistoryDAO historyDao = new HistoryDAO();
+                if (titleSearch == null) {
+                    titleSearch = "";
+                }
+                if (dateBooking == null) {
+                    dateBooking = "";
+                }
+                listHistoryDetail = historyDetail.getListHistoryDetail(UserID, titleSearch, dateBooking);
+                listIDcartHistory = historyDao.getIDCart(UserID);
+                HashMap<Integer, ArrayList<HistoryDetailDTO>> map = new HashMap<>();
+                for (Integer item : listIDcartHistory) {
+                    map.put(item, null);
+                }
+                Set<Integer> listKey = map.keySet();
+                for (Integer key : listKey) {
+                    for (HistoryDetailDTO item : listHistoryDetail) {
+                        if (item.getCart().getIDcart() == key) {
+                            ArrayList<HistoryDetailDTO> listHistoryDetailMap = map.get(key);
+                            if (listHistoryDetailMap == null) {
+                                listHistoryDetailMap = new ArrayList<>();
+                                listHistoryDetailMap.add(item);
+                            } else {
+                                listHistoryDetailMap.add(item);
+                            }
+                            map.put(key, listHistoryDetailMap);
                         }
-                        map.put(key, listHistoryDetailMap);
                     }
                 }
-            }
-            // check hash map empty or not empty
-            int count = 0;
-            for (Integer key : listKey) {
-                ArrayList<HistoryDetailDTO> listHashMap = map.get(key);
-                if (listHashMap != null) {
-                    count++;
+                // check hash map empty or not empty
+                int count = 0;
+                for (Integer key : listKey) {
+                    ArrayList<HistoryDetailDTO> listHashMap = map.get(key);
+                    if (listHashMap != null) {
+                        count++;
+                    }
                 }
+                if (count != 0) {
+                    request.setAttribute("listHistoryMap", map);
+                } else {
+                    request.setAttribute("emptyMap", "No List history");
+                }
+                request.setAttribute("title", titleSearch);
+                request.setAttribute("dateBooking", dateBooking);
+                url = "ViewListHistory.jsp";
             }
-            if (count != 0) {
-                request.setAttribute("listHistoryMap", map);
-            }else{
-                request.setAttribute("emptyMap", "No List history");
-            }
-            request.setAttribute("title", titleSearch);
-            request.setAttribute("dateBooking", dateBooking);
         } catch (SQLException ex) {
             log(ex.getMessage());
         } catch (NamingException ex) {
             log(ex.getMessage());
         } finally {
-            request.getRequestDispatcher("ViewListHistory.jsp").forward(request, response);
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 
