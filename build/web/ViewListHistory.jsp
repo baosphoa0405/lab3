@@ -134,12 +134,16 @@
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.code.codeValue}">
-                                                 ${item.value[0].cart.code.codeValue}%
+                                                <c:forEach var="i" items="${requestScope.listCode}">
+                                                    <c:if test="${i.codeID eq item.value[0].cart.code.codeID}">
+                                                        ${i.codeValue}%
+                                                    </c:if>  
+                                                </c:forEach>        
                                             </c:if>
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.totalPrice}">
-                                                 ${String.format("%,.0f", item.value[0].cart.totalPrice)}VNĐ
+                                                ${String.format("%,.0f", item.value[0].cart.totalPrice)}VNĐ
                                             </c:if>
                                         </td>
                                     </tr>

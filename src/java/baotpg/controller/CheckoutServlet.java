@@ -77,7 +77,7 @@ public class CheckoutServlet extends HttpServlet {
             if (code == null) {
                 code = "";
             }
-            if (!dateShip.isEmpty() && !code.isEmpty()) {
+            if (!dateShip.isEmpty()) {
                 // kiem tra so luong trong kho trc
                 for (String idBook : listKeys) {
                     BookDTO book = bookDao.getDetailBook(idBook);
@@ -92,6 +92,9 @@ public class CheckoutServlet extends HttpServlet {
                     mess = "Sorry book out of stock " + idBookOutOfStock;
                     request.setAttribute("orderFail", mess);
                 } else {
+                    if (code.equals("")) {
+                        code = "0";
+                    }
                     codeValue = Integer.parseInt(code);
                     CodeDAO codeDAO = new CodeDAO();
                     ArrayList<CodesDTO> listCode = codeDAO.getListCode();
@@ -110,8 +113,10 @@ public class CheckoutServlet extends HttpServlet {
                             Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO));
                     // insert codeDetail
                     CodeDetailDAO codeDetail = new CodeDetailDAO();
-                    boolean insertCodeDetai =  codeDetail.updateCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
-                            new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
+                    if (codeDTO != null) {
+                        boolean updateCodeDetail = codeDetail.updateCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
+                                new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
+                    }
                     int idCart = historyDao.getIDCartBy(user.getUserID());
                     HistoryDetailDAO historyDetailDao = new HistoryDetailDAO();
 

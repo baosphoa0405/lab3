@@ -3,14 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/web/Admin.jsp</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/users/UserDAO.java</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/controller/ViewDiscountServlet.java</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/codeDetails/CodeDetailDAO.java</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/web/AddDiscount.jsp</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/controller/AddDiscountServlet.java</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/controller/LoginServlet.java</file>
-            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/controller/MainController.java</file>
+            <file>file:/C:/Users/Admin/Desktop/J3.L.P0018/src/java/baotpg/payment/PaymentServices.java</file>
         </group>
     </open-files>
 </project-private>

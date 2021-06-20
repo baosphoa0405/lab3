@@ -5,6 +5,8 @@
  */
 package baotpg.controller;
 
+import baotpg.codes.CodeDAO;
+import baotpg.codes.CodesDTO;
 import baotpg.histories.HistoryDAO;
 import baotpg.historyDetails.HistoryDetailDAO;
 import baotpg.historyDetails.HistoryDetailDTO;
@@ -96,6 +98,9 @@ public class ViewHistoryServlet extends HttpServlet {
                     }
                 }
                 if (count != 0) {
+                    CodeDAO codeDAO = new CodeDAO();
+                    ArrayList<CodesDTO> list = codeDAO.getListCode();
+                    request.setAttribute("listCode", list);
                     request.setAttribute("listHistoryMap", map);
                 } else {
                     request.setAttribute("emptyMap", "No List history");

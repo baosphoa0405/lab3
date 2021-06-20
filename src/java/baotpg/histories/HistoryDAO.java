@@ -48,7 +48,12 @@ public class HistoryDAO {
                 pstm.setDate(3, history.getDateShip());
                 pstm.setBoolean(4, history.isIsPayment());
                 pstm.setString(5, history.getUser().getUserID());
-                pstm.setInt(6, history.getCode().getCodeID());
+                if (history.getCode() != null) {
+                    pstm.setInt(6, history.getCode().getCodeID());
+                }else{
+                    pstm.setNull(6, java.sql.Types.INTEGER);
+                }
+                
                 flag = pstm.executeUpdate() > 0 ? true : false;
             }
         } finally {
