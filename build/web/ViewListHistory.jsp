@@ -133,7 +133,9 @@
                                             </c:forEach>
                                         </td>
                                         <td>
-                                           ${item.value[0].cart.code.codeValue}%
+                                            <c:if test="${not empty item.value[0].cart.code.codeValue}">
+                                                 ${item.value[0].cart.code.codeValue}%
+                                            </c:if>
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.totalPrice}">

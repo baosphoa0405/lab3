@@ -112,11 +112,16 @@
                         <form method="Post" action="MainController">
                             <span>DateBook: <input type="date" id="dateOrder" name="dateOrder" value="${requestScope.dateOrder}" disabled="true"> </span>
                             <label for="discount">Choose promotion: </label>
-                            <select id="discount" name="code">
+                            <c:if test="${requestScope.listCode.size() == 0}">
+                                <p style="color: green">You don't have a code discount</p>
+                            </c:if>
+                            <c:if test="${requestScope.listCode.size() > 0}">
+                                 <select id="discount" name="code">
                                 <c:forEach var="item" items="${requestScope.listCode}">
                                     <option value="${item.codeValue}">${item.codeValue}%</option>
                                 </c:forEach>
                             </select><br/>
+                            </c:if>
                             <span>DateShip: <input type="date" name="dateShip" value=""  min="${requestScope.dateOrder}"/>
                                 <span style="color: red">${requestScope.errorDateShip}</span>   
                                 <input type="hidden" name="total" value="${total}" />

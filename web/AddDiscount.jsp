@@ -52,7 +52,6 @@
             </div>
         </nav>
         <h1 style="text-align: center">New Discount</h1>
-        ${requestScope.listUser}
         <div class="container">
             <div class="row">
                 <div class="col-4">
@@ -68,13 +67,14 @@
                     </form>
                 </div>
                 <div class="col-8">
-                    <table border="1">
+                    <table style="text-align: center">
                         <thead>
                             <tr>
                                 <th>ID code</th>
                                 <th>code value</th>
                                 <th>create Date</th>
-                                <th>Add discount for user</th>
+                                <th>user</th>
+                                <th>Add discount user</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,11 +85,23 @@
                                     <td>${item.createDate}</td>
                                     <td>
                                         <c:forEach var="i" items="${requestScope.listUser}">
+                                           ${i.userName}<br/>
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                        <c:forEach var="i" items="${requestScope.listUser}">
                                             <div style="display: flex">
-                                                <span> ${i.userName}</span> <a class="btn btn-danger" href="MainController?btnAction=AddDiscount&userID${i.userID}&codeID=${item.codeID}">Add discount</a><br/>
+                                                <a class="btn btn-danger" href="MainController?btnAction=AddDiscount&userID=${i.userID}&codeID=${item.codeID}">Add discount</a><br/>
                                             </div>
                                         </c:forEach>
                                     </td>
+                                    <c:forEach var="i" items="${requestScope.listUser}">
+                                        <c:if test="${i.userID eq requestScope.userID && item.codeID eq requestScope.codeIDSelect}">
+                                            <td style="color: green">
+                                                ${requestScope.mess}
+                                            </td>
+                                        </c:if>
+                                    </c:forEach>
                                 </tr>
                             </c:forEach>
                         </tbody>

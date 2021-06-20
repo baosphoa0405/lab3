@@ -53,6 +53,28 @@ public class CodeDAO {
         return listCode;
     }
 
+    public ArrayList<CodesDTO> getListCodeByIDUser(String userID, int statusID) throws SQLException, NamingException {
+        ArrayList<CodesDTO> listCode = new ArrayList<>();
+        try {
+            cn = DBHelper.makeConnection();
+            if (cn != null) {
+                String sql = "select c.codeID, c.codeValue, c.createDate  from CodeDetail co, Codes c, Users u where\n"
+                        + "co.codeID = c.codeID and co.userID = u.userID \n"
+                        + "and  u.userID = ? and co.statusID = ? ";
+                pstm = cn.prepareStatement(sql);
+                pstm.setString(1, userID);
+                pstm.setInt(2, statusID);
+                rs = pstm.executeQuery();
+                while (rs.next()) {
+                    listCode.add(new CodesDTO(rs.getInt("codeID"), rs.getInt("codeValue"), rs.getDate("createDate")));
+                }
+            }
+        } finally {
+            close();
+        }
+        return listCode;
+    }
+
     public CodesDTO checkCode(String codeID) throws SQLException, NamingException {
         CodesDTO code = null;
         try {

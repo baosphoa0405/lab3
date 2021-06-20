@@ -9,6 +9,8 @@ import baotpg.books.BookDAO;
 import baotpg.books.BookDTO;
 import baotpg.codes.CodeDAO;
 import baotpg.codes.CodesDTO;
+import baotpg.users.UserDTO;
+import baotpg.utils.MyContants;
 import com.sun.java.swing.plaf.windows.WindowsBorders;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +26,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -48,8 +51,10 @@ public class ViewListCartServlet extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             BookDAO bookDAO = new BookDAO();
             listBook = bookDAO.getListBook("", "", "", "");
+            HttpSession session = request.getSession();
+            UserDTO user = (UserDTO) session.getAttribute("account");
             CodeDAO codeDAO = new CodeDAO();
-            ArrayList<CodesDTO> listCode = codeDAO.getListCode();
+            ArrayList<CodesDTO> listCode = codeDAO.getListCodeByIDUser(user.getUserID(), MyContants.STATUS_NUMBER_ACTIVE);
             request.setAttribute("listCode", listCode);
             request.setAttribute("listBook", listBook);
             request.setAttribute("dateOrder", Date.valueOf(java.time.LocalDate.now()));

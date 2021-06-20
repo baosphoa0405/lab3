@@ -61,6 +61,9 @@ public class AddDeleteToCartServlet extends HttpServlet {
                     int quantity = bookDAO.checkQuantityBook(bookID);
                     if (listCart.get(bookID) >= quantity) {
                         // chửi
+                        cart.addItemCart(bookID);
+                        session.setAttribute("cart", cart);
+                        session.setAttribute("listCart", cart.getList());
                         request.setAttribute("bookID", bookID);
                         request.setAttribute("mess", "sorry amount book " + quantity);
                         request.getRequestDispatcher("ViewListCartServlet").forward(request, response);

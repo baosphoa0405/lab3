@@ -107,6 +107,8 @@ public class MainController extends HttpServlet {
                 url = CREATE_DISCOUNT;
             }else if (btnAction.equals(Action_load_product_admin)) {
                 url = LOAD_PRODUCT_ADMIN;
+            }else if (btnAction.equals(Action_ADD_DISCOUNT)) {
+                url = ADD_DISCOUNT_SERVLET;
             }
         } catch (Exception e) {
             log(e.getMessage());

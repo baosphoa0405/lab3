@@ -110,7 +110,7 @@ public class CheckoutServlet extends HttpServlet {
                             Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO));
                     // insert codeDetail
                     CodeDetailDAO codeDetail = new CodeDetailDAO();
-                    boolean insertCodeDetai =  codeDetail.insertCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
+                    boolean insertCodeDetai =  codeDetail.updateCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
                             new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
                     int idCart = historyDao.getIDCartBy(user.getUserID());
                     HistoryDetailDAO historyDetailDao = new HistoryDetailDAO();

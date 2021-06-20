@@ -5,8 +5,21 @@
  */
 package baotpg.controller;
 
+import baotpg.codeDetails.CodeDetailDAO;
+import baotpg.codeDetails.CodeDetailDTO;
+import baotpg.codes.CodeDAO;
+import baotpg.codes.CodesDTO;
+import baotpg.status.StatusDTO;
+import baotpg.users.UserDAO;
+import baotpg.users.UserDTO;
+
+import baotpg.utils.MyContants;
+import java.util.ArrayList;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,11 +45,38 @@ public class AddDiscountServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String userID = request.getParameter("userID");
-        String codeID = request.getParameter("codeID");
-        System.out.println(userID + "-" +  codeID);
-        
-        
+
+        try {
+            String userID = request.getParameter("userID");
+            String codeID = request.getParameter("codeID");
+            CodeDetailDTO codeDetail = new CodeDetailDTO(new CodesDTO(Integer.parseInt(codeID), 0, null), userID, new StatusDTO(MyContants.STATUS_NUMBER_ACTIVE, ""));
+            CodeDetailDAO codeDetailDAO = new CodeDetailDAO();
+            CodeDetailDTO codeCheck = codeDetailDAO.checkCodeDetail(codeDetail);
+            CodeDAO codeDAO = new CodeDAO();
+            ArrayList<CodesDTO> listCode = codeDAO.getListCode();
+            UserDAO userDao = new UserDAO();
+            ArrayList<UserDTO> listUser = userDao.getAllUser();
+
+            if (codeCheck == null) {
+                boolean addCode = codeDetailDAO.insertCodeDetail(codeDetail);
+                request.setAttribute("mess", "add success");
+                request.setAttribute("codeIDSelect", codeID);
+                request.setAttribute("userID", userID);
+            } else {
+                request.setAttribute("mess", "userID " + userID + " had " + "codeID " + codeID);
+                request.setAttribute("codeIDSelect", codeID);
+                request.setAttribute("userID", userID);
+            }
+            request.setAttribute("listUser", listUser);
+            request.setAttribute("listCode", listCode);
+        } catch (NamingException ex) {
+            log(ex.getMessage());
+        } catch (SQLException ex) {
+            log(ex.getMessage());
+        } finally {
+            request.getRequestDispatcher("AddDiscount.jsp").forward(request, response);
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
