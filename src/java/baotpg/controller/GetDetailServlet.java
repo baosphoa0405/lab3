@@ -11,6 +11,7 @@ import baotpg.categories.CategoriesDAO;
 import baotpg.categories.CategoriesDTO;
 import baotpg.status.StatusDAO;
 import baotpg.status.StatusDTO;
+import baotpg.users.UserDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -42,26 +44,36 @@ public class GetDetailServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
-            String bookID = request.getParameter("bookID");
-            BookDAO bookDAO = new BookDAO();
-            BookDTO bookDetail = bookDAO.getDetailBook(bookID);
-            CategoriesDAO categoryDAO = new CategoriesDAO();
-            ArrayList<CategoriesDTO> listCategory = categoryDAO.getListCategory();
-            StatusDAO  statusDAO = new StatusDAO();
-            ArrayList<StatusDTO> listStatus = statusDAO.getListStatus();
-            request.setAttribute("bookDetail", bookDetail);
-            request.setAttribute("listCategory", listCategory);
-            request.setAttribute("listStatus", listStatus);
+            HttpSession session = request.getSession();
+            UserDTO admin = (UserDTO) session.getAttribute("account");
+            if (admin == null) {
+                url = "Login.jsp";
+                request.setAttribute("errorLogin", "Please login before update book");
+            } else {
+                url = "DetailBook.jsp";
+                String bookID = request.getParameter("bookID");
+                BookDAO bookDAO = new BookDAO();
+                BookDTO bookDetail = bookDAO.getDetailBook(bookID);
+                CategoriesDAO categoryDAO = new CategoriesDAO();
+                ArrayList<CategoriesDTO> listCategory = categoryDAO.getListCategory();
+                StatusDAO statusDAO = new StatusDAO();
+                ArrayList<StatusDTO> listStatus = statusDAO.getListStatus();
+                request.setAttribute("bookDetail", bookDetail);
+                request.setAttribute("listCategory", listCategory);
+                request.setAttribute("listStatus", listStatus);
+            }
+
         } catch (SQLException ex) {
             log(ex.getMessage());
         } catch (NamingException ex) {
             log(ex.getMessage());
-        }finally{
-            request.getRequestDispatcher("DetailBook.jsp").forward(request, response);
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -38,7 +38,9 @@ public class PaymentServices {
         Payer payer = getPayerInformation();
         RedirectUrls redirectUrls = getRedirectURLs();
         List<Transaction> listTransaction = getTransactionInformation(history);
-
+        for (Transaction transaction : listTransaction) {
+            System.out.println(transaction);
+        }
         Payment requestPayment = new Payment();
         requestPayment.setTransactions(listTransaction);
         requestPayment.setRedirectUrls(redirectUrls);
@@ -57,10 +59,10 @@ public class PaymentServices {
         payer.setPaymentMethod("paypal");
 
         PayerInfo payerInfo = new PayerInfo();
-        payerInfo.setFirstName("Gia")
-                .setLastName("Bao")
-                .setEmail("baosphoa0403@gmail.com");
-
+        payerInfo.setFirstName("John")
+                .setLastName("Doe")
+                .setEmail("sb-hbbjf4582809@personal.example.com");
+               
         payer.setPayerInfo(payerInfo);
 
         return payer;
@@ -81,7 +83,8 @@ public class PaymentServices {
 
         Amount amount = new Amount();
         amount.setCurrency("USD");
-        amount.setTotal(Float.toString(history.getTotalPrice()));
+//        Float.toString(history.getTotalPrice())
+        amount.setTotal(String.format("%.2f", history.getTotalPrice()));
         amount.setDetails(details);
 
         Transaction transaction = new Transaction();

@@ -6,6 +6,7 @@
 package baotpg.controller;
 
 import baotpg.books.BookDAO;
+import baotpg.users.UserDTO;
 import baotpg.utils.MyContants;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -37,25 +39,35 @@ public class DeleteProductServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
-            String bookID = request.getParameter("bookID");
-            BookDAO bookDAO = new BookDAO();
-            boolean flag = bookDAO.updateStatusBook(bookID, MyContants.STATUS_NUMBER_INACTIVE);
-            String mess = "";
-            if (flag) {
-                mess = "DELETE SUCCESS " + bookID;
+            HttpSession session = request.getSession();
+            UserDTO admin = (UserDTO) session.getAttribute("account");
+            if (admin == null) {
+                url = "Login.jsp";
+                request.setAttribute("errorLogin", "Please login before delete book");
             } else {
-                mess = "DELETE FAIL " + bookID;
+                url = "LoadProductAdminServlet";
+                String bookID = request.getParameter("bookID");
+                BookDAO bookDAO = new BookDAO();
+                boolean flag = bookDAO.updateStatusBook(bookID, MyContants.STATUS_NUMBER_INACTIVE);
+                String mess = "";
+                if (flag) {
+                    mess = "DELETE SUCCESS " + bookID;
+                } else {
+                    mess = "DELETE FAIL " + bookID;
+                }
+                request.setAttribute("bookID", bookID);
+                request.setAttribute("mess", mess);
             }
-            request.setAttribute("bookID", bookID);
-            request.setAttribute("mess", mess);
+
         } catch (NamingException ex) {
             log(ex.getMessage());
         } catch (SQLException ex) {
             log(ex.getMessage());
-        }finally{
-            request.getRequestDispatcher("LoadProductAdminServlet").forward(request, response);
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
 
     }

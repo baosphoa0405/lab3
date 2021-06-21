@@ -7,6 +7,7 @@ package baotpg.controller;
 
 import baotpg.categories.CategoriesDAO;
 import baotpg.categories.CategoriesDTO;
+import baotpg.users.UserDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,19 +40,29 @@ public class InsertServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
-            CategoriesDAO categoryDAO = new CategoriesDAO();
-            ArrayList<CategoriesDTO> listCategory = categoryDAO.getListCategory();
-            request.setAttribute("listCategory", listCategory);
+            HttpSession session = request.getSession();
+            UserDTO user = (UserDTO) session.getAttribute("account");
+            if (user == null) {
+                url = "Login.jsp";
+                request.setAttribute("errorLogin", "Please login before insert book");
+            } else {
+                url = "Insert.jsp";
+                CategoriesDAO categoryDAO = new CategoriesDAO();
+                ArrayList<CategoriesDTO> listCategory = categoryDAO.getListCategory();
+                request.setAttribute("listCategory", listCategory);
+            }
+
         } catch (NamingException ex) {
             log(ex.getMessage());
         } catch (SQLException ex) {
             log(ex.getMessage());
-        }finally{
-            request.getRequestDispatcher("Insert.jsp").forward(request, response);
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

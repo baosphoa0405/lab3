@@ -74,9 +74,12 @@ public class LoginServlet extends HttpServlet {
                         session.setAttribute("account", account);
                         if (account.getRole().getRoleName().equals(MyContants.ROLE_USER)) {
                             url = URL_USER;
-                        }else{
+                        }else if (account.getRole().getRoleName().endsWith(MyContants.ROLE_ADMIN)){
                             url = URL_ADMIN;
-                        }
+                        }else {
+                            url = ERROR;
+                            messError = "role invalid";
+                        } 
                     }else{
                         messError = "userID " + userID + " InActive";
                     }

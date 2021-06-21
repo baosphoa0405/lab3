@@ -16,9 +16,11 @@ import baotpg.histories.HistoryDAO;
 import baotpg.histories.HistoryDTO;
 import baotpg.historyDetails.HistoryDetailDAO;
 import baotpg.historyDetails.HistoryDetailDTO;
+import baotpg.payment.PaymentServices;
 import baotpg.status.StatusDTO;
 import baotpg.users.UserDTO;
 import baotpg.utils.MyContants;
+import com.paypal.base.rest.PayPalRESTException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
@@ -109,6 +111,15 @@ public class CheckoutServlet extends HttpServlet {
                     // discount nè 
                     float totalAfterDiscount = Float.parseFloat(total) - (Float.parseFloat(total) * codeValue / 100);
                     // insert History
+                    PaymentServices paymentService = new PaymentServices();
+//                    try {
+//                        HistoryDTO history = new HistoryDTO(0, totalAfterDiscount,
+//                                Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO);
+//                        String approveLink = paymentService.authorizePayment(history);
+//                        response.sendRedirect(approveLink);
+//                    } catch (PayPalRESTException ex) {
+//                        log(ex.getMessage());
+//                    }
                     boolean flag = historyDao.insertHistory(new HistoryDTO(0, totalAfterDiscount,
                             Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO));
                     // insert codeDetail

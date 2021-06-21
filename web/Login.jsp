@@ -14,6 +14,7 @@
     <body>
        <h1 style="text-align: center">Login Page</h1>
        <p style="color: red; text-align: center">${requestScope.messError}</p>
+       <p style="color: red; text-align: center">${requestScope.errorLogin}</p>
         <div style="display: flex; justify-content: space-around">
             <form method="Post" action="MainController">
                 <label>UserID</label><input type="text" name="userID" value="${requestScope.userID}"/><br/>

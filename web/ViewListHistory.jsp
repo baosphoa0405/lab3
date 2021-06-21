@@ -140,6 +140,9 @@
                                                     </c:if>  
                                                 </c:forEach>        
                                             </c:if>
+                                            <c:if test="${item.value[0].cart.code.codeID eq 0}">
+                                                No discount
+                                            </c:if>
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.totalPrice}">

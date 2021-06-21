@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -40,20 +41,29 @@ public class ViewDiscountServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String url = "";
         try {
             response.setContentType("text/html;charset=UTF-8");
-            CodeDAO codeDAO = new CodeDAO();
-            ArrayList<CodesDTO> listCode = codeDAO.getListCode();
-            UserDAO userDao = new UserDAO();
-            ArrayList<UserDTO> listUser = userDao.getAllUser();
-            request.setAttribute("listUser", listUser);
-            request.setAttribute("listCode", listCode);
+            HttpSession session = request.getSession();
+            UserDTO user = (UserDTO) session.getAttribute("account");
+            if (user == null) {
+                url = "Login.jsp";
+                request.setAttribute("errorLogin", "Please login before view list discount");
+            } else {
+                url = "AddDiscount.jsp";
+                CodeDAO codeDAO = new CodeDAO();
+                ArrayList<CodesDTO> listCode = codeDAO.getListCode();
+                UserDAO userDao = new UserDAO();
+                ArrayList<UserDTO> listUser = userDao.getAllUser();
+                request.setAttribute("listUser", listUser);
+                request.setAttribute("listCode", listCode);
+            }
         } catch (SQLException ex) {
             log(ex.getMessage());
         } catch (NamingException ex) {
             log(ex.getMessage());
         } finally {
-            request.getRequestDispatcher("AddDiscount.jsp").forward(request, response);
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 
