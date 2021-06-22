@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
-    private String LOAD_PRODUCT_JSP = "LoadProductServlet";
+    private String LOAD_PRODUCT_SERVLET = "LoadProductServlet";
     private String LOGIN_SERVLET = "LoginServlet";
     private String LOGOUT_SERVLET = "LogoutServlet";
     private String DELETE_SERVLET = "DeleteProductServlet";
@@ -56,6 +56,8 @@ public class MainController extends HttpServlet {
     private String Action_Create_Discount = "createDiscount";
     private String Action_load_product_admin = "loadAdmin";
     private String Action_ADD_DISCOUNT = "AddDiscount";
+    private String Action_Search = "search";
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -72,13 +74,15 @@ public class MainController extends HttpServlet {
         String url = "";
         try {
             if (btnAction == null) {
-                url = LOAD_PRODUCT_JSP;
+                url = LOAD_PRODUCT_SERVLET;
+            }else if (btnAction.equals(Action_Search)) {
+                url = LOAD_PRODUCT_SERVLET;
             }else if (btnAction.equals(ACTION_LOGIN)) {
                 url = LOGIN_SERVLET;
             }else if (btnAction.equals(ACTION_LOGOUT)) {
                 url = LOGOUT_SERVLET;
             }else if (btnAction.equals(ACTION_RESET)) {
-                url = LOAD_PRODUCT_JSP;
+                url = LOAD_PRODUCT_SERVLET;
             }else if (btnAction.equals(ACTION_DELETE)) {
                 url = DELETE_SERVLET;
             }else if (btnAction.equals(ACTION_INSERT)) {

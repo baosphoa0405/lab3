@@ -63,7 +63,7 @@ public class LoadProductServlet extends HttpServlet {
                 category = "";
             }
             ArrayList<CategoriesDTO> listCategories = categoryDAO.getListCategory();
-            listCategories.add(new CategoriesDTO(3, "ALL"));
+            listCategories.add(new CategoriesDTO(listCategories.size() + 1, "ALL"));
             ArrayList<BookDTO> listBook = bookDAO.getListBook(title, category, min, max);
             if (listBook.size() == 0) {
                 request.setAttribute("mess", "NO BOOK SEARCH FOR USER");

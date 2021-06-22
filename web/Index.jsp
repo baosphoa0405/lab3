@@ -62,7 +62,7 @@
                     <input class="form-control mr-sm-2" name="title" value="${requestScope.title}" type="search" placeholder="Search" aria-label="Search">
                     <input class="form-control mr-sm-2" name="min" value="${requestScope.min}" type="number" placeholder="min" min="0" aria-label="Min">
                     <input class="form-control mr-sm-2" name="max" value="${requestScope.max}" type="number" placeholder="max"  aria-label="Max">
-                    <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+                    <button class="btn btn-success my-2 my-sm-0" type="submit" name="btnAction" value="search">Search</button>
                 </form>
                 <a href="MainController?btnAction=Reset" class="btn btn-success my-2 my-sm-0 ml-2 px-2">Reset</a>
             </div>
