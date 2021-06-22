@@ -70,7 +70,6 @@ public class CheckoutServlet extends HttpServlet {
             String total = request.getParameter("total");
             HttpSession session = request.getSession();
             UserDTO user = (UserDTO) session.getAttribute("account");
-            HistoryDAO historyDao = new HistoryDAO();
             String mess = "";
             HashMap<String, Integer> cart = (HashMap<String, Integer>) session.getAttribute("listCart");
             Set<String> listKeys = cart.keySet();
@@ -114,43 +113,16 @@ public class CheckoutServlet extends HttpServlet {
                     float totalAfterDiscount = Float.parseFloat(total) - (Float.parseFloat(total) * codeValue / 100);
                     // insert History
                     PaymentServices paymentService = new PaymentServices();
+                     HistoryDTO history = null;
                     try {
-                        HistoryDTO history = new HistoryDTO(0, totalAfterDiscount,
+                        history = new HistoryDTO(0, totalAfterDiscount,
                                 Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO);
                         String approveLink = paymentService.authorizePayment(history, cart, listKeys, codeValue);
                         url = approveLink;
                     } catch (PayPalRESTException ex) {
                         log(ex.getMessage());
                     }
-                    boolean flag = historyDao.insertHistory(new HistoryDTO(0, totalAfterDiscount,
-                            Date.valueOf(dateOrder), Date.valueOf(dateShip), true, user, codeDTO));
-                    // insert codeDetail
-                    CodeDetailDAO codeDetail = new CodeDetailDAO();
-                    if (codeDTO != null) {
-                        boolean updateCodeDetail = codeDetail.updateCodeDetail(new CodeDetailDTO(codeDTO, user.getUserID(),
-                                new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
-                    }
-                    int idCart = historyDao.getIDCartBy(user.getUserID());
-                    HistoryDetailDAO historyDetailDao = new HistoryDetailDAO();
-
-                    if (flag) {
-                        for (String idBook : listKeys) {
-                            HistoryDetailDTO historyDetail = new HistoryDetailDTO(new HistoryDTO(idCart, 0, null, null, false, user, codeDTO),
-                                    new BookDTO(idBook, "", "", "", "", 0, null, null, 0, null), cart.get(idBook));
-                            boolean isAdd = historyDetailDao.insertHistortyDetail(historyDetail);
-                            if (isAdd) {
-                                BookDTO book = bookDao.getDetailBook(idBook);
-                                boolean isUpdateQuantity = bookDao.updateQuantityBook(idBook, book.getQuantity() - cart.get(idBook));
-                                if (isUpdateQuantity) {
-                                    mess = "order successfull";
-                                }
-                            }
-                        }
-                    }
-                    if (mess.equals("order successfull")) {
-                        session.removeAttribute("cart");
-                        session.removeAttribute("listCart");
-                    }
+                    session.setAttribute("history", history);
                 }
             } else {
                 isError = true;
@@ -160,7 +132,6 @@ public class CheckoutServlet extends HttpServlet {
         } catch (NamingException ex) {
             log(ex.getMessage());
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
             log(ex.getMessage());
         } finally {
             if (isError) {

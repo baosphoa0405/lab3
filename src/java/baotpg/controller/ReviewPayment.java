@@ -5,7 +5,19 @@
  */
 package baotpg.controller;
 
+import baotpg.books.BookDAO;
+import baotpg.books.BookDTO;
+import baotpg.codeDetails.CodeDetailDAO;
+import baotpg.codeDetails.CodeDetailDTO;
+import baotpg.codes.CodesDTO;
+import baotpg.histories.HistoryDAO;
+import baotpg.histories.HistoryDTO;
+import baotpg.historyDetails.HistoryDetailDAO;
+import baotpg.historyDetails.HistoryDetailDTO;
 import baotpg.payment.PaymentServices;
+import baotpg.status.StatusDTO;
+import baotpg.users.UserDTO;
+import baotpg.utils.MyContants;
 import com.paypal.api.payments.PayerInfo;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.ShippingAddress;
@@ -13,11 +25,17 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.PayPalRESTException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Set;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -42,7 +60,46 @@ public class ReviewPayment extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String paymentId = request.getParameter("paymentId");
         String payerId = request.getParameter("PayerID");
+         BookDAO bookDao = new BookDAO();
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("account");
+        String mess = "";
+        HashMap<String, Integer> cart = (HashMap<String, Integer>) session.getAttribute("listCart");
+        Set<String> listKeys = cart.keySet();
+        HistoryDAO historyDao = new HistoryDAO();
+        HistoryDTO history = (HistoryDTO) session.getAttribute("history");
         try {
+            history.setIsPayment(true);
+            history.setTotalPrice((float)Math.round(history.getTotalPrice() * 100) / 100);
+            boolean flag = historyDao.insertHistory(history);
+            // insert codeDetail
+            CodeDetailDAO codeDetail = new CodeDetailDAO();
+            if (history.getCode() != null) {
+                boolean updateCodeDetail = codeDetail.updateCodeDetail(new CodeDetailDTO(history.getCode(), user.getUserID(),
+                        new StatusDTO(MyContants.STATUS_NUMBER_INACTIVE, "")));
+            }
+            int idCart = historyDao.getIDCartBy(user.getUserID());
+            HistoryDetailDAO historyDetailDao = new HistoryDetailDAO();
+
+            if (flag) {
+                for (String idBook : listKeys) {
+                    HistoryDetailDTO historyDetail = new HistoryDetailDTO(new HistoryDTO(idCart, 0, null, null, false, user, history.getCode()),
+                            new BookDTO(idBook, "", "", "", "", 0, null, null, 0, null), cart.get(idBook));
+                    boolean isAdd = historyDetailDao.insertHistortyDetail(historyDetail);
+                    if (isAdd) {
+                        BookDTO book = bookDao.getDetailBook(idBook);
+                        boolean isUpdateQuantity = bookDao.updateQuantityBook(idBook, book.getQuantity() - cart.get(idBook));
+                        if (isUpdateQuantity) {
+                            mess = "order successfull";
+                        }
+                    }
+                }
+            }
+            if (mess.equals("order successfull")) {
+                session.removeAttribute("cart");
+                session.removeAttribute("listCart");
+            }
+
             PaymentServices paymentServices = new PaymentServices();
             Payment payment = paymentServices.getPaymentDetails(paymentId);
 
@@ -58,11 +115,13 @@ public class ReviewPayment extends HttpServlet {
             String url = "review.jsp?paymentId=" + paymentId + "&PayerID=" + payerId;
 
             request.getRequestDispatcher(url).forward(request, response);
-
         } catch (PayPalRESTException ex) {
-            request.setAttribute("errorMessage", ex.getMessage());
-            ex.printStackTrace();
+            log(ex.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);
+        } catch (NamingException ex) {
+            log(ex.getMessage());
+        } catch (SQLException ex) {
+            log(ex.getMessage());
         }
     }
 
