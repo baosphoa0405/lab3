@@ -60,6 +60,7 @@ public class CheckoutServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String url = FAIL;
+        boolean isError = false;
         try {
             response.setContentType("text/html;charset=UTF-8");
             String code = request.getParameter("code");
@@ -91,6 +92,7 @@ public class CheckoutServlet extends HttpServlet {
                     }
                 }
                 if (checkQuantity) {
+                    isError = false;
                     mess = "Sorry book out of stock " + idBookOutOfStock;
                     request.setAttribute("orderFail", mess);
                 } else {
@@ -112,16 +114,16 @@ public class CheckoutServlet extends HttpServlet {
                     float totalAfterDiscount = Float.parseFloat(total) - (Float.parseFloat(total) * codeValue / 100);
                     // insert History
                     PaymentServices paymentService = new PaymentServices();
-//                    try {
-//                        HistoryDTO history = new HistoryDTO(0, totalAfterDiscount,
-//                                Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO);
-//                        String approveLink = paymentService.authorizePayment(history);
-//                        response.sendRedirect(approveLink);
-//                    } catch (PayPalRESTException ex) {
-//                        log(ex.getMessage());
-//                    }
+                    try {
+                        HistoryDTO history = new HistoryDTO(0, totalAfterDiscount,
+                                Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO);
+                        String approveLink = paymentService.authorizePayment(history, cart, listKeys, codeValue);
+                        url = approveLink;
+                    } catch (PayPalRESTException ex) {
+                        log(ex.getMessage());
+                    }
                     boolean flag = historyDao.insertHistory(new HistoryDTO(0, totalAfterDiscount,
-                            Date.valueOf(dateOrder), Date.valueOf(dateShip), false, user, codeDTO));
+                            Date.valueOf(dateOrder), Date.valueOf(dateShip), true, user, codeDTO));
                     // insert codeDetail
                     CodeDetailDAO codeDetail = new CodeDetailDAO();
                     if (codeDTO != null) {
@@ -146,13 +148,12 @@ public class CheckoutServlet extends HttpServlet {
                         }
                     }
                     if (mess.equals("order successfull")) {
-                        url = SUCCESSS;
                         session.removeAttribute("cart");
                         session.removeAttribute("listCart");
-                        request.setAttribute("orderSuccess", mess);
                     }
                 }
             } else {
+                isError = true;
                 request.setAttribute("errorDateShip", "please choose DateShip");
             }
 
@@ -162,7 +163,11 @@ public class CheckoutServlet extends HttpServlet {
             System.out.println(ex.getMessage());
             log(ex.getMessage());
         } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+            if (isError) {
+                request.getRequestDispatcher(url).forward(request, response);
+            } else {
+                response.sendRedirect(url);
+            }
         }
     }
 

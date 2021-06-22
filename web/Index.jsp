@@ -50,11 +50,10 @@
         </nav>
 
         <h1 style="color: red; text-align: center">${requestScope.errorAddToCart}</h1>
-        <h1 style="color: green; text-align: center">${requestScope.orderSuccess}</h1>
-         
+        
         <div class="container mt-5">
             <div class="row">
-                <form class="form-inline my-2 my-lg-0" method="MainController">
+                <form class="form-inline my-2 my-lg-0" action="MainController" method="Post">
                     <select style="padding: 7px 7px; margin: 0px 10px" name="category">
                         <c:forEach items="${requestScope.listCategory}" var="item">
                             <option value="${item.categoryName}" ${requestScope.category eq item.categoryName ? "selected" : ""}>${item.categoryName}</option>
