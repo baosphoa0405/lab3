@@ -19,7 +19,7 @@
             <form method="Post" action="MainController">
                 <label>UserID</label><input type="text" name="userID" value="${requestScope.userID}"/><br/>
                 <p style="color: red" >${requestScope.error.emptyUserID}</p>
-                <label>Password<label> <input type="text" name="password" value="${requestScope.password}"/><br/>
+                <label>Password<label> <input type="password" name="password" value="${requestScope.password}"/><br/>
                 <p style="color: red" >${requestScope.error.emptyPassword}</p>
                 <input type="submit" value="Login" name="btnAction" class="btn btn-success my-2 my-sm-0"/>
             </form>
