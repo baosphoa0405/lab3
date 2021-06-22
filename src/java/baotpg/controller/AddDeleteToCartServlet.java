@@ -66,7 +66,6 @@ public class AddDeleteToCartServlet extends HttpServlet {
                         session.setAttribute("listCart", cart.getList());
                         request.setAttribute("bookID", bookID);
                         request.setAttribute("mess", "sorry amount book " + quantity);
-                        request.getRequestDispatcher("ViewListCartServlet").forward(request, response);
                     } else {
                         cart.addItemCart(bookID);
                     }
@@ -81,7 +80,7 @@ public class AddDeleteToCartServlet extends HttpServlet {
             }
         }
         session.setAttribute("cart", cart);
-        response.sendRedirect("ViewListCartServlet");
+        request.getRequestDispatcher("ViewListCartServlet").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

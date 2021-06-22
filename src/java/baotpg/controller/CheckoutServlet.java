@@ -92,7 +92,7 @@ public class CheckoutServlet extends HttpServlet {
                     }
                 }
                 if (checkQuantity) {
-                    isError = false;
+                    isError = true;
                     mess = "Sorry book out of stock " + idBookOutOfStock;
                     request.setAttribute("orderFail", mess);
                 } else {

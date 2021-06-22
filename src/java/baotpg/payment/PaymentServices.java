@@ -94,7 +94,7 @@ public class PaymentServices {
 
     private RedirectUrls getRedirectURLs() {
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("http://localhost:8084/J3.L.P0018/cancel.html");
+        redirectUrls.setCancelUrl("http://localhost:8084/J3.L.P0018/cancel.jsp");
         redirectUrls.setReturnUrl("http://localhost:8084/J3.L.P0018/ReviewPayment");
 
         return redirectUrls;
@@ -119,7 +119,7 @@ public class PaymentServices {
             for (BookDTO item : listBook) {
                 if (item.getBookID().equals(key)) {
                     items.add(new Item(item.getTitle(), String.valueOf(cart.get(key)), 
-                            String.valueOf((item.getPrice()*codeValue)/100), "USD"));
+                            String.valueOf(item.getPrice() - (item.getPrice()*codeValue)/100), "USD"));
                 }
             }
         }

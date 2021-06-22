@@ -82,11 +82,11 @@
                                                 <td>${item.title}</td>
                                                 <td>${item.image}</td>
                                                 <td>${item.category.categoryName}</td>
-                                                <td>${String.format("%,.0f", item.price)}Đ</td>
+                                                <td>${item.price}$</td>
                                                 <td>${item.quantity}</td>
-                                                <td>${String.format("%,.0f", item.price * itemCart.value)}Đ</td>
+                                                <td>${String.format("%,.2f", item.price * itemCart.value)}$</td>
                                                 <td>
-                                                    <a class="btn btn-danger" disabled="${not empty requestScope.mess ? "true" : "false"}" 
+                                                    <a class="btn btn-danger" ${not empty requestScope.mess ? "disabled" : ""}  
                                                        style="cursor: ${not empty requestScope.mess && requestScope.bookID eq item.bookID ? "not-allowed" : ""}"
                                                        href="MainController?btnAction=AddDeleteToCart&bookID=${item.bookID}&flag=true">+</a>   
                                                     <span style="padding: ${itemCart.value < 10 ? "5px" : "0px"}">${itemCart.value}</span>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-3">
                         <h6>Information Bill</h6>
-                        <p>Total: ${total > 0 ? String.format("%,.0f", total) : 0} Đ</p>
+                        <p>Total: ${total > 0 ? String.format("%,.2f", total) : 0} $</p>
                         <form method="Post" action="MainController">
                             <span>DateBook: <input type="date" id="dateOrder" name="dateOrder" value="${requestScope.dateOrder}" disabled="true"> </span>
                             <label for="discount">Choose promotion: </label>

@@ -124,7 +124,7 @@
                                         </td>
                                         <td>
                                             <c:forEach var="i" items="${item.value}">
-                                                ${String.format("%,.0f", i.book.price)}VNĐ<br/>
+                                                ${String.format("%,.2f", i.book.price)}$<br/>
                                             </c:forEach>
                                         </td>
                                         <td>
@@ -146,7 +146,7 @@
                                         </td>
                                         <td>
                                             <c:if test="${not empty item.value[0].cart.totalPrice}">
-                                                ${String.format("%,.0f", item.value[0].cart.totalPrice)}VNĐ
+                                                ${String.format("%,.2f", item.value[0].cart.totalPrice)}$
                                             </c:if>
                                         </td>
                                     </tr>

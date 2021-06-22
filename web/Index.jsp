@@ -79,7 +79,7 @@
                                     <h5 class="card-title">Author: ${item.author}</h5>
                                     <h5 class="card-title">Quantity ${item.quantity}</h5>
                                     <p class="card-text">Description: ${item.description}</p>
-                                    <p class="card-text">Price:  ${String.format("%,.0f", item.price)}VNĐ</p>
+                                    <p class="card-text">Price:  ${item.price}$</p>
                                     <p class="card-text">Date: ${item.date}</p>
                                     <a href="MainController?btnAction=AddToCart&bookID=${item.bookID}" class="btn btn-primary">Buy</a>
                                 </div>

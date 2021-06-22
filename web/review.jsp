@@ -40,13 +40,13 @@
                     <td>
                        
                         <c:forEach var="i" items="${requestScope.listItem.items}">
-                            name: ${i.name} - price: ${i.price} VND<br/>
+                            name: ${i.name} - quantity: ${i.quantity} - price: ${i.price} $<br/>
                         </c:forEach>
                     </td>
                 </tr>
                 <tr>
                     <td><b>Subtotal:</b></td>
-                    <td>${transaction.amount.details.subtotal} VND</td>
+                    <td>${transaction.amount.details.subtotal} $</td>
                 </tr>
                 <tr>
                     <td><b>Shipping </b></td>
@@ -54,7 +54,7 @@
                 </tr>
                 <tr>
                     <td><b>Total:</b></td>
-                    <td>${transaction.amount.total} USD</td>
+                    <td>${transaction.amount.total} $</td>
                 </tr>                    
             </table>
         </div>
